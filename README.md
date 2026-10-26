@@ -1,8 +1,8 @@
-# QWeb Studio
+# Odoo QWeb Editor
 
 Editor visual de informes y plantillas QWeb de Odoo, desarrollado por **[kikedev64](https://github.com/kikedev64/kikedev64)**.
 
-Repositorio: **[kikedev64/odoo_qweb_editor](https://github.com/kikedev64/odoo_qweb_editor)** · Aplicación: **QWeb Studio** · Comando: `odoo-report-editor`.
+Repositorio: **[kikedev64/Odoo-QWeb-Editor](https://github.com/kikedev64/Odoo-QWeb-Editor)** · Aplicación: **QWeb Studio** · Comando: `odoo-report-editor`.
 
 Abre una terminal en tu proyecto Odoo, ejecuta `odoo-report-editor` y selecciona un modelo, un informe y un registro de ejemplo. Edita el XML y consulta el resultado en una vista A4 que se actualiza mientras trabajas.
 
@@ -54,8 +54,8 @@ La integración se ha probado con Odoo **14, 16, 18 y 19**. La compatibilidad de
 Con Git, Python 3.11 o posterior y soporte para `venv` instalados:
 
 ```bash
-git clone https://github.com/kikedev64/odoo_qweb_editor.git
-cd odoo_qweb_editor
+git clone https://github.com/kikedev64/Odoo-QWeb-Editor.git
+cd Odoo-QWeb-Editor
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e .
@@ -244,7 +244,7 @@ La API utiliza la cookie `editor_session`. Las peticiones que modifican el estad
 | El puerto está ocupado | Arranca con otro puerto, por ejemplo `--port 8877`. |
 | No se abre el navegador | Abre manualmente la URL que imprime la terminal; `--no-browser` desactiva su apertura automática. |
 
-Para comunicar un error, utiliza los [issues del repositorio](https://github.com/kikedev64/odoo_qweb_editor/issues) e incluye pasos para reproducirlo, versión de Python y Odoo, modo utilizado y el detalle técnico pertinente. Elimina credenciales y datos privados de los ejemplos.
+Para comunicar un error, utiliza los [issues del repositorio](https://github.com/kikedev64/Odoo-QWeb-Editor/issues) e incluye pasos para reproducirlo, versión de Python y Odoo, modo utilizado y el detalle técnico pertinente. Elimina credenciales y datos privados de los ejemplos.
 
 ## Desarrollo
 
@@ -302,4 +302,4 @@ Los comentarios del código se limitan a docstrings de Python y JSDoc en inglés
 
 Desarrollado por **[kikedev64](https://github.com/kikedev64/kikedev64)**. La misma atribución aparece en «Acerca de» dentro de la aplicación.
 
-La licencia de distribución está pendiente de elección por el autor.
+Este proyecto se distribuye bajo los términos de la licencia MIT. Consulta el fichero `LICENSE` para ver el texto completo.
