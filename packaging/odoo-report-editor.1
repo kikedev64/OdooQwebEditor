@@ -1,0 +1,54 @@
+.TH ODOO-REPORT-EDITOR 1 "October 2026" "QWeb Studio" "User Commands"
+.SH NAME
+odoo-report-editor \- edit Odoo QWeb reports with a live A4 preview
+.SH SYNOPSIS
+.B odoo-report-editor
+.RI [ directory ]
+.RI [ options ]
+.SH DESCRIPTION
+QWeb Studio reads a local Docker Compose project and opens a report editor
+in the browser. Select a model, report and sample record, edit the template,
+and export an Odoo XML file. The current directory is used by default.
+.PP
+The editor listens on 127.0.0.1. A running Odoo service and its PostgreSQL
+database are required unless demo mode is selected.
+.SH OPTIONS
+.TP
+.B \-\-demo
+Use fictional data without Docker or Odoo.
+.TP
+.BI \-\-service " NAME"
+Select the Odoo Compose service.
+.TP
+.BI "\-d, \-\-database " NAME
+Select the Odoo database.
+.TP
+.BI "\-f, \-\-compose-file " FILE
+Use an alternative Compose file.
+.TP
+.BI \-\-python " PATH"
+Select the Python executable inside the Odoo container.
+.TP
+.BI \-\-port " PORT"
+Choose the local HTTP port. The default is 8765.
+.TP
+.B \-\-no-browser
+Do not open the browser automatically.
+.TP
+.B \-h, \-\-help
+Show command-line help.
+.SH FILES
+.TP
+.I report_editor_exports/
+Exported XML files inside the selected project directory. Saving does not
+overwrite module sources or stored Odoo template architectures.
+.SH EXAMPLES
+.nf
+odoo-report-editor /path/to/odoo-project
+odoo-report-editor --demo --port 8877
+odoo-report-editor -d example --service odoo --no-browser
+.fi
+.SH AUTHOR
+Developed by kikedev64.
+.PP
+https://github.com/kikedev64/kikedev64

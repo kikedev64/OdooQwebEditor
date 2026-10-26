@@ -1,0 +1,11 @@
+#!/usr/bin/python3
+"""Launch the Debian-installed editor while preserving the working directory."""
+import sys
+
+sys.dont_write_bytecode = True
+sys.path.insert(0, "/usr/share/odoo-report-editor")
+
+from report_editor.__main__ import main
+
+if __name__ == "__main__":
+    main()

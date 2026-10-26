@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>QWeb Studio · Editor de informes Odoo</title>
+  <link rel="stylesheet" href="/static/style.css"/>
+  <link rel="stylesheet" href="/static/preview.css"/>
+</head>
+<body>
+  <aside class="sidebar" id="tools-sidebar">
+    <button id="toggle-tools" class="tools-toggle" aria-label="Plegar bloques y campos" aria-expanded="true" aria-controls="blocks fields" title="Plegar bloques y campos">‹</button>
+    <a class="brand" href="/" aria-label="QWeb Studio"><span class="brand-icon">q.</span><span>QWeb <b>Studio</b></span></a>
+    <div class="sidebar-heading">CONSTRUIR <span>＋</span></div>
+    <p class="sidebar-help">Arrastra un bloque al documento o haz clic para insertarlo.</p>
+    <div id="blocks" class="blocks"></div>
+    <div class="sidebar-heading fields-heading">CAMPOS DEL MODELO</div>
+    <input id="field-search" class="sidebar-search" placeholder="Buscar un campo…" aria-label="Buscar campo"/>
+    <div id="fields" class="fields"></div>
+  </aside>
+  <main>
+    <header class="topbar">
+      <div class="top-actions"><label class="database-control">Base de datos <select id="database" aria-label="Base de datos"></select></label></div>
+      <div class="document-actions"><button class="button" id="about-button">Acerca de</button><button class="button" id="export-button">↓ Descargar borrador</button><button class="button primary" id="save-button">Guardar XML</button></div>
+    </header>
+    <section class="configuration">
+      <div class="search-control"><label for="model-search"><b>1</b> Modelo</label><div class="combobox"><input id="model-search" role="combobox" aria-label="Modelo" aria-expanded="false" aria-controls="model-results" aria-autocomplete="list" autocomplete="off" placeholder="Buscar modelo…"/><button type="button" class="combo-toggle" aria-label="Mostrar modelos">⌄</button><div id="model-results" class="combo-results" role="listbox" hidden></div></div></div>
+      <div class="search-control report-control"><label for="report-search"><b>2</b> Informe</label><div class="combobox"><input id="report-search" role="combobox" aria-label="Informe" aria-expanded="false" aria-controls="report-results" aria-autocomplete="list" autocomplete="off" placeholder="Selecciona primero un modelo" disabled/><button type="button" class="combo-toggle" aria-label="Mostrar informes" disabled>⌄</button><div id="report-results" class="combo-results" role="listbox" hidden></div></div></div>
+      <div class="search-control record-control"><label for="record-search"><b>3</b> Registro de ejemplo</label><div class="combobox"><input id="record-search" role="combobox" aria-label="Registro de ejemplo" aria-expanded="false" aria-controls="record-results" aria-autocomplete="list" autocomplete="off" placeholder="Selecciona primero un informe" disabled/><button type="button" class="combo-toggle" aria-label="Mostrar registros" disabled>⌄</button><div id="record-results" class="combo-results" role="listbox" hidden></div></div></div>
+    </section>
+    <section class="editor-workspace">
+      <div class="editor-pane">
+        <div class="pane-toolbar"><div class="tab active"><span class="code-icon">&lt;/&gt;</span> Código QWeb <span id="dirty-dot" class="dirty-dot" hidden></span></div><div class="toolbar-actions"><button id="undo" title="Deshacer">↶</button><button id="redo" title="Rehacer">↷</button><button id="format" title="Formatear XML">{ }</button></div></div>
+        <div class="file-bar"><span class="xml-icon">XML</span><select id="template" aria-label="Plantilla del informe" disabled><option value="">Selecciona un informe</option></select><span id="filename" hidden></span><span class="file-language">QWeb / XML</span></div>
+        <div class="code-area"><div class="line-numbers" id="line-numbers" aria-hidden="true"></div><textarea id="source" spellcheck="false" aria-label="Código XML de la plantilla" autocapitalize="off" autocomplete="off" wrap="off"></textarea></div>
+        <div class="code-footer"><span id="cursor-position">Línea 1, Col 1</span><span>UTF-8 <span class="footer-separator">|</span> XML <span class="footer-separator">|</span> <span id="xml-status">✓ XML válido</span></span></div>
+      </div>
+      <div class="split-handle" id="split-handle" role="separator" aria-label="Ajustar anchura del editor" aria-orientation="vertical" tabindex="0"></div>
+      <div class="preview-pane">
+        <div class="pane-toolbar"><div class="tab"><span class="preview-icon">▧</span> Vista previa <span class="live-badge">LIVE</span></div><div class="toolbar-actions"><label class="live-toggle"><input type="checkbox" id="live" checked/> Auto</label><button id="refresh" title="Actualizar vista previa">↻</button><select id="zoom" aria-label="Zoom de vista previa"><option value="fit" selected>Ajustar</option><option value="0.65">65%</option><option value="0.8">80%</option><option value="1">100%</option><option value="1.25">125%</option></select></div></div>
+        <div class="preview-tip"><select id="preview-mode" aria-label="Tipo de previsualización"><option value="pdf">PDF de Odoo</option><option value="html">Edición visual</option></select><span id="preview-help">PDF generado por Odoo con el borrador actual.</span><label class="placeholder-toggle"><input type="checkbox" id="placeholders"/> Campos de ejemplo</label></div>
+        <div id="resource-warning" class="placeholder-warning" role="status" hidden></div>
+        <details id="placeholder-warning" class="placeholder-warning" hidden><summary id="placeholder-summary"></summary><p>Esta vista usa datos de ejemplo para los campos ausentes. El XML original se conserva al guardar.</p><ul id="placeholder-list"></ul></details>
+        <div class="preview-scroll" id="preview-scroll"><div id="preview-empty" class="preview-empty"><span>▤</span><strong>Prepara tu vista previa</strong><p>Selecciona un modelo, un informe y un registro de ejemplo.</p></div><iframe id="pdf-preview" title="PDF generado por Odoo" hidden referrerpolicy="no-referrer"></iframe><div id="paper-wrapper" hidden><iframe id="preview" title="Vista previa del informe" sandbox="allow-same-origin" referrerpolicy="no-referrer"></iframe></div></div>
+        <div class="preview-footer"><span id="preview-status">Selecciona un modelo para empezar.</span><span class="preview-metrics"><span id="page-count">A4 · 210 × 297 mm</span><span id="render-time"></span></span></div>
+      </div>
+    </section>
+    <section class="inspector" id="inspector">
+      <div class="selection"><span class="selection-icon">⌖</span><div><small>ELEMENTO SELECCIONADO</small><strong id="selected-label">Ninguno</strong></div></div>
+      <label>Texto<input id="element-text" placeholder="Selecciona un elemento" disabled/></label>
+      <label>Color<input id="element-color" placeholder="#243348" disabled/></label>
+      <label>Tamaño<input id="element-size" placeholder="16px" disabled/></label>
+      <label>Espaciado<input id="element-padding" placeholder="12px" disabled/></label>
+      <label>Insertar<select id="insert-position"><option value="after">Después</option><option value="before">Antes</option><option value="inside">Dentro</option></select></label>
+      <div class="selection-actions"><button id="move-up" title="Mover antes del elemento anterior">↑</button><button id="move-down" title="Mover después del siguiente elemento">↓</button><button id="delete-element" class="danger" title="Eliminar elemento">⌫</button></div>
+    </section>
+    <div class="bottom-note"><span>Ctrl S · guardar XML <span class="footer-separator">/</span> Ctrl ↵ · previsualizar</span></div>
+    <div id="error" class="error-panel" role="alert" hidden><button id="dismiss-error" aria-label="Cerrar error">×</button><strong id="error-title">No se ha podido completar la operación</strong><p id="error-message"></p><button id="locate-error" class="button" hidden>Localizar campo en el código</button><details id="error-details" hidden><summary>Detalle técnico</summary><pre id="error-trace"></pre></details></div>
+    <div id="toast" class="toast" role="status" hidden></div>
+  </main>
+  <dialog id="about-dialog" aria-labelledby="about-title">
+    <button class="dialog-close" id="close-about" aria-label="Cerrar acerca de">×</button>
+    <span class="about-mark">q.</span><h2 id="about-title">Acerca de QWeb Studio</h2>
+    <p>Editor visual de informes y plantillas QWeb de Odoo.</p>
+    <p>Desarrollado por <strong>kikedev64</strong>.</p>
+    <a class="button primary about-link" href="https://github.com/kikedev64/kikedev64" target="_blank" rel="noopener noreferrer">Ver kikedev64 en GitHub ↗</a>
+  </dialog>
+  <script src="/static/source-map.js" defer></script>
+  <script src="/static/pagination.js" defer></script>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

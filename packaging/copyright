@@ -1,0 +1,10 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: QWeb Studio
+Upstream-Contact: kikedev64 <kikedev64@users.noreply.github.com>
+Source: https://github.com/kikedev64
+
+Files: *
+Copyright: 2026 kikedev64
+License: All-rights-reserved
+ No distribution license has been selected by the copyright holder.
+ All rights reserved.

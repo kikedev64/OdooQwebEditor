@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "odoo-report-editor"
+version = "0.1.0"
+description = "Editor local de plantillas QWeb con vista previa y conexión a Odoo"
+readme = "README.md"
+authors = [{name = "kikedev64"}]
+requires-python = ">=3.11"
+dependencies = ["fastapi>=0.101,<1", "uvicorn>=0.27,<1", "lxml>=5,<7"]
+
+[project.urls]
+Author = "https://github.com/kikedev64"
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10", "httpx>=0.27,<1"]
+browser = ["playwright>=1.49,<2"]
+
+[project.scripts]
+odoo-report-editor = "report_editor.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["report_editor*"]
+
+[tool.setuptools.package-data]
+report_editor = ["static/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
