@@ -7,6 +7,7 @@ name = "odoo-report-editor"
 version = "0.1.0"
 description = "Editor local de plantillas QWeb con vista previa y conexión a Odoo"
 readme = "README.md"
+license = "MIT"
 authors = [{name = "kikedev64"}]
 requires-python = ">=3.11"
 dependencies = ["fastapi>=0.101,<1", "uvicorn>=0.27,<1", "lxml>=5,<7"]
