@@ -1,254 +1,261 @@
 # Odoo QWeb Editor
 
-Editor visual de informes y plantillas QWeb de Odoo, desarrollado por **[kikedev64](https://github.com/kikedev64/kikedev64)**.
+A visual editor for Odoo QWeb reports and templates, developed by **[kikedev64](https://github.com/kikedev64/kikedev64)**.
 
-Repositorio: **[kikedev64/Odoo-QWeb-Editor](https://github.com/kikedev64/Odoo-QWeb-Editor)** · Aplicación: **QWeb Studio** · Comando: `odoo-report-editor`.
+Repository: **[kikedev64/OdooQwebEditor](https://github.com/kikedev64/OdooQwebEditor)** · Application: **QWeb Studio** · Command: `odoo-report-editor`.
 
-Abre una terminal en tu proyecto Odoo, ejecuta `odoo-report-editor` y selecciona un modelo, un informe y un registro de ejemplo. Edita el XML y consulta el resultado en una vista A4 que se actualiza mientras trabajas.
+Open a terminal in your Odoo project, run `odoo-report-editor`, and select a model, report, and sample record. Edit the XML and see the result in an A4 preview that updates as you work.
 
-![Editor de QWeb Studio](docs/images/editor.png)
+![QWeb Studio editor](docs/images/editor.png)
 
-## Índice
+## Contents
 
-- [Funcionalidades](#funcionalidades)
-- [Requisitos](#requisitos)
-- [Inicio rápido desde GitHub](#inicio-rápido-desde-github)
-- [Instalar el `.deb`](#instalar-el-deb)
-- [Generar el instalador](#generar-el-instalador)
-- [Uso](#uso)
-- [Exportación](#exportación)
-- [Campos de ejemplo y límites](#campos-de-ejemplo-y-límites)
-- [Conexión y aislamiento](#conexión-y-aislamiento)
-- [Arquitectura y API local](#arquitectura-y-api-local)
-- [Solución de problemas](#solución-de-problemas)
-- [Desarrollo](#desarrollo)
-- [Autoría y licencia](#autoría-y-licencia)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Quick start from GitHub](#quick-start-from-github)
+- [Install the Debian package](#install-the-debian-package)
+- [Build the installer](#build-the-installer)
+- [Usage](#usage)
+- [Exporting templates](#exporting-templates)
+- [Sample fields and limitations](#sample-fields-and-limitations)
+- [Connection and isolation](#connection-and-isolation)
+- [Architecture and local API](#architecture-and-local-api)
+- [Troubleshooting](#troubleshooting)
+- [Development](#development)
+- [Credits and license](#credits-and-license)
 
-## Funcionalidades
+## Features
 
-- Detección del servicio Odoo y sus bases de datos a partir de Docker Compose.
-- Selección de modelo → informe → registro, con búsqueda por ID, nombre, referencia o cliente.
-- Editor XML junto al PDF generado por Odoo con el borrador actual y una vista HTML para editar visualmente.
-- Fuentes, CSS e imágenes locales incorporados desde la base de datos seleccionada, incluidos recursos privados y bundles generados durante el renderizado.
-- Selección sincronizada entre el elemento visual y su posición en el código.
-- Hojas A4 numeradas, márgenes del informe y continuación del contenido en varias páginas.
-- Bloques de texto, títulos, tablas, columnas, imágenes y campos que puedes insertar o arrastrar.
-- Inspector de texto, expresiones, color, tamaño y espaciado; deshacer y rehacer.
-- Panel de bloques y campos plegable, zoom y ancho de paneles ajustable.
-- Campos de ejemplo para previsualizar plantillas que utilizan campos ausentes.
-- Exportación de XML sin sobrescribir los módulos ni guardar el borrador en Odoo.
+- Discover the Odoo service and its databases from Docker Compose.
+- Select a model → report → record, with searches by ID, name, reference, or customer.
+- Edit XML alongside an Odoo-generated PDF of the current draft, with an HTML view for visual editing.
+- Embed local fonts, CSS, and images from the selected database, including private resources and bundles generated during rendering.
+- Keep visual element selection synchronized with its position in the code.
+- Preview numbered A4 pages, report margins, and content flowing across multiple pages.
+- Insert or drag text blocks, headings, tables, columns, images, and fields.
+- Inspect text, expressions, colors, sizes, and spacing; undo and redo changes.
+- Collapse the blocks and fields panel, zoom, and resize panels.
+- Use sample fields to preview templates that reference missing fields.
+- Export XML without overwriting modules or saving the draft in Odoo.
 
-## Requisitos
+## Requirements
 
-Para instalar el paquete Debian:
+To install the Debian package:
 
-- Ubuntu 24.04 o un sistema Debian/Ubuntu con Python 3.11+, FastAPI 0.101+, Uvicorn 0.27+ y lxml 5+. APT resuelve estas dependencias.
-- Un navegador web para abrir la interfaz.
+- Ubuntu 24.04, or a Debian/Ubuntu system with Python 3.11+, FastAPI 0.101+, Uvicorn 0.27+, and lxml 5+. APT resolves these dependencies.
+- A web browser to open the interface.
 
-Para trabajar con un proyecto real también necesitas Docker, el plugin **Docker Compose v2**, permisos para usar Docker y el servicio Odoo con su PostgreSQL en ejecución. El instalador no instala ni arranca Odoo o Docker.
+For a real project, you also need Docker, the **Docker Compose v2** plugin, permission to use Docker, and a running Odoo service with PostgreSQL. The installer does not install or start Odoo or Docker.
 
-La integración se ha probado con Odoo **14, 16, 18 y 19**. La compatibilidad de cada informe también depende de sus módulos y datos. El modo demo funciona sin Docker.
+The integration has been tested with Odoo **14, 16, 18, and 19**. Individual report compatibility also depends on the installed modules and data. Demo mode works without Docker.
 
-## Inicio rápido desde GitHub
+## Quick start from GitHub
 
-Con Git, Python 3.11 o posterior y soporte para `venv` instalados:
+With Git, Python 3.11 or later, and `venv` support installed:
 
 ```bash
-git clone https://github.com/kikedev64/Odoo-QWeb-Editor.git
-cd Odoo-QWeb-Editor
+git clone https://github.com/kikedev64/OdooQwebEditor.git
+cd OdooQwebEditor
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e .
 odoo-report-editor --demo
 ```
 
-En Debian/Ubuntu, si faltan las herramientas de Python, instala `python3-venv` y `python3-pip` con APT. La instalación desde fuentes necesita acceso al índice de paquetes para resolver las dependencias.
+On Debian/Ubuntu, install `python3-venv` and `python3-pip` with APT if the Python tools are missing. Installing from source requires access to the package index to resolve dependencies.
 
-La demo abre `http://127.0.0.1:8765` y permite probar el flujo con presupuestos ficticios. Para conectar un proyecto real, detén la demo con **Ctrl+C** y ejecuta, desde el mismo entorno virtual:
+The demo opens `http://127.0.0.1:8765` and lets you try the workflow with fictional quotations. To connect a real project, stop the demo with **Ctrl+C** and run the following from the same virtual environment:
 
 ```bash
-odoo-report-editor /ruta/a/mi-proyecto-odoo --service odoo -d mi_base
+odoo-report-editor /path/to/my-odoo-project --service odoo -d my_database
 ```
 
-Sustituye la ruta, el servicio y la base de datos por los de tu proyecto. Puedes omitir `--service` cuando la detección sea inequívoca y `-d` para elegir la base en la interfaz. El editor es una aplicación local independiente: su instalación no requiere añadir un módulo a Odoo.
+Replace the path, service, and database with your project's values. You can omit `--service` when discovery is unambiguous, and omit `-d` to choose the database in the interface. The editor is a standalone local application; installing it does not require adding an Odoo module.
 
-## Instalar el `.deb`
+## Install the Debian package
 
-Genera primero el paquete con `./build_deb.sh`, como se explica en la siguiente sección. Desde la raíz de esta copia del repositorio:
+Download `odoo-report-editor_0.1.0_all.deb` and its `.sha256` file from [GitHub Releases](https://github.com/kikedev64/OdooQwebEditor/releases). From the download directory:
+
+```bash
+sha256sum -c odoo-report-editor_0.1.0_all.deb.sha256
+sudo apt install ./odoo-report-editor_0.1.0_all.deb
+```
+
+Alternatively, build the package with `./build_deb.sh`, as described below, and install it from the repository root:
 
 ```bash
 sudo apt install ./dist/odoo-report-editor_0.1.0_all.deb
 ```
 
-El paquete instala `/usr/bin/odoo-report-editor` y la aplicación en `/usr/share/odoo-report-editor/`. Usa las bibliotecas Python gestionadas por APT; no descarga paquetes con pip durante la instalación ni requiere activar un entorno virtual.
+The package installs `/usr/bin/odoo-report-editor` and the application in `/usr/share/odoo-report-editor/`. It uses Python libraries managed by APT; installation does not download packages with pip or require activating a virtual environment.
 
-Después puedes ejecutarlo desde cualquier terminal:
+You can then run it from any terminal:
 
 ```bash
-cd /ruta/a/mi-proyecto-odoo
+cd /path/to/my-odoo-project
 odoo-report-editor
 ```
 
-Para desinstalarlo:
+To uninstall it:
 
 ```bash
 sudo apt remove odoo-report-editor
 ```
 
-Los XML exportados dentro de tus proyectos se conservan.
+XML files exported into your projects are preserved.
 
-## Generar el instalador
+## Build the installer
 
-Necesitas Bash, Python 3.11+, `dpkg-deb` y las utilidades habituales de GNU/Linux. En Ubuntu:
+You need Bash, Python 3.11+, `dpkg-deb`, and standard GNU/Linux utilities. On Ubuntu:
 
 ```bash
 sudo apt install python3 dpkg gzip coreutils findutils
 ./build_deb.sh
 ```
 
-Se genera `dist/odoo-report-editor_0.1.0_all.deb`, junto a su suma SHA-256 en un fichero `.sha256`. La versión se toma de `pyproject.toml`. La construcción no necesita permisos de administrador, acceso a Internet, un entorno virtual ni un proyecto Odoo.
+This creates `dist/odoo-report-editor_0.1.0_all.deb` and its SHA-256 checksum in a `.sha256` file. The version comes from `pyproject.toml`. Building requires no administrator privileges, Internet access, virtual environment, or Odoo project.
 
-Puedes elegir otra carpeta de salida:
+You can choose a different output directory:
 
 ```bash
-./build_deb.sh /tmp/instaladores
+./build_deb.sh /tmp/installers
 ```
 
-Para reproducir un paquete con las mismas fechas de construcción, fija `SOURCE_DATE_EPOCH`. Si no lo defines, se usa la fecha del último commit o, en una carpeta sin historial, la fecha actual.
+To reproduce a package with the same build timestamps, set `SOURCE_DATE_EPOCH`. Otherwise, the latest commit's timestamp is used, or the current time in a directory without Git history.
 
 ```bash
 SOURCE_DATE_EPOCH=1792627200 ./build_deb.sh
 ```
 
-El paquete incluye únicamente la aplicación, sus recursos web y documentación. No incluye el entorno virtual, pruebas, resultados de auditorías, bases de datos ni exportaciones.
+The package contains only the application, its web resources, and documentation. It excludes the virtual environment, tests, audit results, databases, and exports.
 
-## Uso
+## Usage
 
-También puedes indicar el proyecto sin cambiar de directorio:
+You can also specify the project without changing directories:
 
 ```bash
-odoo-report-editor /ruta/a/mi-proyecto-odoo
+odoo-report-editor /path/to/my-odoo-project
 ```
 
-Se abre `http://127.0.0.1:8765` en el navegador.
+The browser opens `http://127.0.0.1:8765`.
 
-1. Si hay varias bases de datos, selecciona la que quieres usar.
-2. Elige el **modelo**, por su nombre descriptivo o técnico, como `sale.order`.
-3. Selecciona el **informe**. Se muestra `nombre de ir.actions.report - report_name`.
-4. Busca y selecciona un **registro de ejemplo**. `#123` busca directamente el ID 123. El editor no elige un registro por ti.
-5. La opción **PDF de Odoo**, seleccionada inicialmente en proyectos reales, muestra el borrador con el motor PDF, las tipografías y el formato de papel del informe. Edita el XML y la vista se actualiza tras una breve pausa. El visor PDF tiene sus propios controles de zoom. Cambia a **Edición visual** para utilizar los bloques, seleccionar elementos y usar el inspector; su paginación HTML es aproximada. Los informes HTML y la demo utilizan esta segunda opción.
-6. Pulsa **Guardar XML** para exportar la plantilla. **Descargar borrador** descarga únicamente su arquitectura XML.
+1. If several databases are available, select the one to use.
+2. Choose the **model** by its descriptive or technical name, such as `sale.order`.
+3. Select the **report**, displayed as `ir.actions.report name - report_name`.
+4. Find and select a **sample record**. `#123` searches directly for ID 123. The editor does not choose a record for you.
+5. **Odoo PDF** (shown as **PDF de Odoo** in the interface), selected by default for real projects, displays the draft using the report's PDF engine, fonts, and paper format. Edit the XML and the view updates after a short pause. The PDF viewer has its own zoom controls. Switch to **Visual editing** (**Edición visual**) to use blocks, select elements, and use the inspector; its HTML pagination is approximate. HTML reports and the demo use this second mode.
+6. Click **Save XML** (**Guardar XML**) to export the template. **Download draft** (**Descargar borrador**) downloads only its XML architecture.
 
-La flecha del panel de bloques y campos permite plegarlo; el navegador recuerda esa preferencia. Los elementos repetidos por un bucle comparten la misma etiqueta del template.
+The arrow in the blocks and fields panel collapses it; the browser remembers this preference. Elements repeated by a loop share the same template tag.
 
-| Opción | Uso |
+| Option | Purpose |
 | --- | --- |
-| `--demo` | Probar la aplicación con datos ficticios, sin Odoo. |
-| `--service NOMBRE` | Seleccionar el servicio Odoo del Compose. |
-| `--database NOMBRE`, `-d NOMBRE` | Elegir la base de datos. |
-| `--compose-file FICHERO`, `-f FICHERO` | Usar un Compose alternativo. |
-| `--python RUTA` | Elegir el Python **dentro del contenedor**. |
-| `--port NUMERO` | Cambiar el puerto del editor; por defecto, 8765. |
-| `--no-browser` | Arrancar sin abrir automáticamente el navegador. |
-| `--help` | Mostrar las opciones disponibles. |
+| `--demo` | Try the application with fictional data, without Odoo. |
+| `--service NAME` | Select the Odoo service in Compose. |
+| `--database NAME`, `-d NAME` | Choose the database. |
+| `--compose-file FILE`, `-f FILE` | Use an alternative Compose file. |
+| `--python PATH` | Choose the Python interpreter **inside the container**. |
+| `--port NUMBER` | Change the editor's port; the default is 8765. |
+| `--no-browser` | Start without automatically opening the browser. |
+| `--help` | Show the available options. |
 
 ```bash
 odoo-report-editor --demo
-odoo-report-editor /ruta/proyecto -d mi_bd --service odoo
-odoo-report-editor /ruta/proyecto -f desarrollo.yml --port 8877 --no-browser
+odoo-report-editor /path/to/project -d my_database --service odoo
+odoo-report-editor /path/to/project -f development.yml --port 8877 --no-browser
 ```
 
-Atajos: **Ctrl/Cmd S** guarda XML; **Ctrl/Cmd Enter** actualiza la vista previa.
+Shortcuts: **Ctrl/Cmd S** saves XML; **Ctrl/Cmd Enter** refreshes the preview.
 
-## Exportación
+## Exporting templates
 
-Cada guardado crea un fichero nuevo:
+Each save creates a new file:
 
 ```text
-mi-proyecto-odoo/
+my-odoo-project/
 └── report_editor_exports/
-    └── sale.report_saleorder_document_FECHA_IDENTIFICADOR.xml
+    └── sale.report_saleorder_document_DATE_IDENTIFIER.xml
 ```
 
-Contiene un registro `ir.ui.view` dentro de `<odoo>`, con su identificador externo y arquitectura QWeb. Puedes incorporarlo a los datos de un módulo y declararlo en su `__manifest__.py`.
+It contains an `ir.ui.view` record inside `<odoo>`, with its external identifier and QWeb architecture. You can include it in a module's data files and declare it in `__manifest__.py`.
 
-Conserva el identificador externo para actualizar una vista existente. Para crear otra, asigna un identificador distinto y conéctala al informe correspondiente. El editor no aplica ese XML a la base de datos ni modifica los ficheros originales del proyecto.
+Keep the external identifier to update an existing view. To create another view, assign a different identifier and connect it to the appropriate report. The editor does not apply this XML to the database or modify the project's original files.
 
-## Campos de ejemplo y límites
+## Sample fields and limitations
 
-**Campos de ejemplo** está desactivado inicialmente en proyectos reales para comprobar los datos y las condiciones reales. La demo lo activa inicialmente. Si lo activas, primero se intenta renderizar con datos reales; si falla un campo ausente, se sustituye en una copia temporal por una referencia como `[sale.order.custom_reference]`. El aviso enumera los campos sustituidos. Se admiten relaciones, alias de bucles y ciertos formateadores de campos ausentes, con un máximo de 32 sustituciones por petición.
+**Sample fields** (**Campos de ejemplo**) is disabled by default for real projects so you can check actual data and conditions. The demo enables it by default. When enabled, rendering first uses real data; if a missing field causes a failure, it is replaced in a temporary copy with a reference such as `[sale.order.custom_reference]`. A warning lists the replaced fields. Relations, loop aliases, and certain formatters for missing fields are supported, with up to 32 substitutions per request.
 
-La visualización es aproximada: las condiciones pueden activarse para mostrar una sección; los cálculos usan cero y las colecciones ausentes una fila de ejemplo. Desactiva esta opción para comprobar el renderizado estricto. Los placeholders no se guardan en el XML exportado ni crean campos en Odoo.
+The preview is approximate: conditions may be enabled to display a section; calculations use zero, and missing collections use one sample row. Disable this option to check strict rendering. Placeholders are not saved in exported XML and do not create fields in Odoo.
 
-Ten en cuenta:
+Keep these limitations in mind:
 
-- **PDF de Odoo** utiliza el motor PDF y el formato de papel de la acción, con sus márgenes, orientación, cabeceras y pies. Requiere que el generador PDF de Odoo esté instalado. No reutiliza adjuntos de informes anteriores. Los borradores y sus recursos temporales se procesan sin confirmar la transacción.
-- **Edición visual** utiliza HTML paginado en **A4 vertical de 210 × 297 mm**. Conserva los márgenes del formato de papel, repite cabeceras y pies externos y evita dividir filas de tablas cuando caben en una hoja. Puede diferir del PDF, especialmente con tablas complejas, posiciones fijas o contenido indivisible mayor que una página. Utiliza la opción PDF para revisar el resultado final.
-- Se listan las plantillas base alcanzables mediante `t-call` estáticos. La edición visual de extensiones XPath y las llamadas calculadas dinámicamente tienen limitaciones.
-- Los elementos añadidos por vistas heredadas no tienen necesariamente un marcador propio del editor.
-- Un informe puede necesitar datos de un asistente, un registro concreto o módulos adicionales. Las etiquetas estándar de producto preparan su asistente en memoria; no se guarda en la base de datos.
-- No se fabrican métodos de Python, variables de contexto ni columnas SQL ausentes. Los errores de código, esquema y módulos siguen requiriendo corregir el entorno o la plantilla. El editor conserva la última vista válida y muestra el detalle técnico.
-- Los recursos estáticos de módulos, adjuntos, imágenes de campos binarios y códigos de barras se leen dentro del contenedor y se incorporan al documento, junto con las fuentes referenciadas por CSS. Los recursos externos conservan sus URLs y necesitan ser accesibles. Se muestran avisos para los recursos locales que no existen o no se pueden incorporar.
-- La imagen de muestra de la paleta debe sustituirse por una URL válida antes de utilizar el informe fuera del editor.
-- Los borradores sin exportar se pierden al cerrar. Las consultas SQL tienen un límite de 30 segundos por sentencia.
+- **Odoo PDF** uses the action's PDF engine and paper format, including margins, orientation, headers, and footers. Odoo's PDF generator must be installed. Previously attached reports are not reused. Drafts and their temporary resources are processed without committing the transaction.
+- **Visual editing** uses paginated HTML in **portrait A4, 210 × 297 mm**. It preserves paper format margins, repeats external headers and footers, and avoids splitting table rows when they fit on a page. It may differ from the PDF, especially with complex tables, fixed positioning, or indivisible content larger than a page. Use PDF mode to check the final result.
+- Base templates reachable through static `t-call` directives are listed. Visual editing of XPath extensions and dynamically computed calls has limitations.
+- Elements added by inherited views do not necessarily have their own editor marker.
+- A report may require wizard data, a specific record, or additional modules. Standard product labels prepare their wizard in memory; it is not saved to the database.
+- Missing Python methods, context variables, and SQL columns are not fabricated. Code, schema, and module errors still require fixing the environment or template. The editor keeps the last valid preview and displays technical details.
+- Module static resources, attachments, binary field images, and barcodes are read inside the container and embedded in the document, along with fonts referenced by CSS. External resources retain their URLs and must be accessible. Warnings identify local resources that are missing or cannot be embedded.
+- Replace the palette's sample image with a valid URL before using the report outside the editor.
+- Unexported drafts are lost when you close the application. SQL queries have a 30-second limit per statement.
 
-## Conexión y aislamiento
+## Connection and isolation
 
-El editor resuelve la configuración con `docker compose config --format json`, respetando `.env` y los overrides habituales. Reconoce opciones de conexión del comando, la configuración de Odoo y variables habituales de las imágenes oficiales y Doodba.
+The editor resolves configuration with `docker compose config --format json`, respecting `.env` and the usual overrides. It recognizes connection options from the command, Odoo configuration, and common variables used by official images and Doodba.
 
-Se prefiere el contenedor habitual del servicio. También se admite un único contenedor creado con `docker compose run` cuando el servicio normal no está arrancado. No se elige entre varios contenedores ambiguos ni se arrancan contenedores automáticamente.
+The service's regular container is preferred. A single container created with `docker compose run` is also supported when the regular service is not running. The editor does not choose between ambiguous containers or start containers automatically.
 
-Se consultan las bases configuradas por Odoo y se filtran las que contienen su esquema. `POSTGRES_DB` no se toma automáticamente como la base de trabajo del editor.
+Databases configured for Odoo are queried and filtered to those containing its schema. `POSTGRES_DB` is not automatically used as the editor's working database.
 
-El ORM se ejecuta como superusuario en un proceso privado del contenedor. Los borradores se inyectan únicamente en su caché y cada consulta termina en rollback. No se instalan ni actualizan módulos. El rollback no puede deshacer llamadas externas de módulos personalizados, y la inicialización del registro conserva el comportamiento normal de Odoo.
+The ORM runs as superuser in a private process inside the container. Drafts are injected only into its cache, and each query ends with a rollback. No modules are installed or updated. Rollback cannot undo external calls made by custom modules, and registry initialization retains Odoo's normal behavior.
 
-La interfaz solo escucha en `127.0.0.1`; el iframe de previsualización desactiva scripts y formularios.
+The interface listens only on `127.0.0.1`; the preview iframe disables scripts and forms.
 
-## Arquitectura y API local
+## Architecture and local API
 
-La interfaz está escrita en HTML, CSS y JavaScript y se sirve con FastAPI y Uvicorn. No requiere Node.js ni una compilación del frontend. `project.py` descubre Docker Compose y mantiene un proceso Python privado dentro del contenedor Odoo; `docker_worker.py` realiza las consultas y el renderizado con el ORM y QWeb del propio proyecto. `qweb_support.py` gestiona la resolución de plantillas y los campos de ejemplo, y `preview_resources.py` incorpora los recursos del informe.
+The interface is written in HTML, CSS, and JavaScript and served by FastAPI and Uvicorn. It requires neither Node.js nor a frontend build. `project.py` discovers Docker Compose and maintains a private Python process inside the Odoo container; `docker_worker.py` queries and renders using the project's own ORM and QWeb. `qweb_support.py` handles template resolution and sample fields, while `preview_resources.py` embeds report resources.
 
-El flujo de una vista previa es: navegador → API local → proceso dentro de Odoo → renderizado HTML o PDF → navegador. El código de paginación y selección visual está en `report_editor/static/`.
+The preview flow is: browser → local API → process inside Odoo → HTML or PDF rendering → browser. Pagination and visual selection code lives in `report_editor/static/`.
 
-Con el servidor arrancado, la documentación interactiva está en [`/docs`](http://127.0.0.1:8765/docs) y el esquema OpenAPI en [`/openapi.json`](http://127.0.0.1:8765/openapi.json).
+With the server running, interactive documentation is available at [`/docs`](http://127.0.0.1:8765/docs), and the OpenAPI schema at [`/openapi.json`](http://127.0.0.1:8765/openapi.json).
 
-| Método y ruta | Función |
+| Method and path | Purpose |
 | --- | --- |
-| `GET /api/status` | Modo, proyecto, servicio y bases disponibles. |
-| `POST /api/database` | Seleccionar la base de datos de la sesión. |
-| `GET /api/reports` | Listar informes y sus modelos. |
-| `GET /api/templates` | Buscar plantillas y filtrar por informe. |
-| `GET /api/templates/{template_id}` | Obtener el XML y la revisión de una plantilla. |
-| `GET /api/records` | Buscar registros de un modelo. |
-| `GET /api/fields` | Consultar campos para insertar en la plantilla. |
-| `POST /api/preview` | Renderizar el borrador en HTML o PDF. |
-| `GET /api/preview.pdf` | Obtener el PDF de la sesión con su token temporal. |
-| `POST /api/save` | Exportar la plantilla a un nuevo archivo XML. |
+| `GET /api/status` | Get the mode, project, service, and available databases. |
+| `POST /api/database` | Select the session's database. |
+| `GET /api/reports` | List reports and their models. |
+| `GET /api/templates` | Search templates and filter by report. |
+| `GET /api/templates/{template_id}` | Get a template's XML and revision. |
+| `GET /api/records` | Search a model's records. |
+| `GET /api/fields` | Query fields to insert into the template. |
+| `POST /api/preview` | Render the draft as HTML or PDF. |
+| `GET /api/preview.pdf` | Get the session's PDF using its temporary token. |
+| `POST /api/save` | Export the template to a new XML file. |
 
-La API utiliza la cookie `editor_session`. Las peticiones que modifican el estado requieren `X-Editor-Request: 1` y, si incluyen `Origin`, debe coincidir con el origen del editor. Para automatizar peticiones, conserva la cookie entre llamadas y consulta los cuerpos JSON en OpenAPI; la interfaz ya gestiona estos requisitos.
+The API uses the `editor_session` cookie. Requests that change state require `X-Editor-Request: 1`; if they include `Origin`, it must match the editor's origin. To automate requests, preserve the cookie between calls and consult OpenAPI for JSON request bodies; the interface handles these requirements automatically.
 
-## Solución de problemas
+## Troubleshooting
 
-| Síntoma | Comprobación o solución |
+| Symptom | Check or solution |
 | --- | --- |
-| No se encuentra Docker Compose | Ejecuta el editor con la ruta del proyecto que contiene el Compose, o indica el fichero mediante `-f`. |
-| No se puede elegir el servicio | Especifica `--service NOMBRE` y comprueba `docker compose config` dentro del proyecto. |
-| No se encuentra un contenedor arrancado | Comprueba `docker compose ps` y arranca el entorno Odoo por el procedimiento habitual de tu proyecto. |
-| Docker rechaza el acceso | Comprueba que tu usuario puede ejecutar Docker y que el daemon está disponible. |
-| Python no puede importar Odoo | Usa `--python` con el intérprete del contenedor que tenga instalado Odoo. |
-| No aparece la base de datos | Revisa la conexión PostgreSQL de Odoo y selecciona una base con su esquema inicializado. |
-| No aparecen registros | Confirma el modelo, la base seleccionada y que existan datos; busca un registro concreto con `#ID`. |
-| Falla la vista PDF | Comprueba el generador PDF del contenedor y los requisitos de la acción; consulta el detalle técnico del error. |
-| Faltan imágenes o fuentes | Revisa los avisos de recursos y la existencia de archivos, adjuntos y URLs externas. |
-| Un campo personalizado impide renderizar | Activa **Campos de ejemplo** para explorar el diseño y corrige el campo o el módulo para validar el informe real. |
-| El puerto está ocupado | Arranca con otro puerto, por ejemplo `--port 8877`. |
-| No se abre el navegador | Abre manualmente la URL que imprime la terminal; `--no-browser` desactiva su apertura automática. |
+| Docker Compose is not found | Run the editor with the project path containing the Compose file, or specify the file with `-f`. |
+| The service cannot be selected | Specify `--service NAME` and check `docker compose config` inside the project. |
+| No running container is found | Check `docker compose ps` and start the Odoo environment using your project's normal procedure. |
+| Docker denies access | Check that your user can run Docker and that the daemon is available. |
+| Python cannot import Odoo | Use `--python` with the container's interpreter that has Odoo installed. |
+| The database is missing | Check Odoo's PostgreSQL connection and select a database with an initialized Odoo schema. |
+| No records appear | Confirm the model, selected database, and available data; search for a specific record with `#ID`. |
+| The PDF preview fails | Check the container's PDF generator and the action's requirements; review the error's technical details. |
+| Images or fonts are missing | Review resource warnings and check files, attachments, and external URLs. |
+| A custom field prevents rendering | Enable **Sample fields** (**Campos de ejemplo**) to explore the layout, then fix the field or module to validate the actual report. |
+| The port is already in use | Start with another port, such as `--port 8877`. |
+| The browser does not open | Open the URL printed in the terminal manually; `--no-browser` disables automatic opening. |
 
-Para comunicar un error, utiliza los [issues del repositorio](https://github.com/kikedev64/Odoo-QWeb-Editor/issues) e incluye pasos para reproducirlo, versión de Python y Odoo, modo utilizado y el detalle técnico pertinente. Elimina credenciales y datos privados de los ejemplos.
+To report a bug, use the [repository's issues](https://github.com/kikedev64/OdooQwebEditor/issues) and include reproduction steps, Python and Odoo versions, the mode used, and relevant technical details. Remove credentials and private data from examples.
 
-## Desarrollo
+## Development
 
-Instala una copia editable en un entorno virtual:
+Install an editable copy in a virtual environment:
 
 ```bash
 python3 -m venv .venv
@@ -258,48 +265,48 @@ playwright install chromium
 pytest -q
 ```
 
-Para comprobar la interfaz, arranca la demo en una terminal:
+To check the interface, start the demo in one terminal:
 
 ```bash
 odoo-report-editor --demo --port 8880 --no-browser
 ```
 
-En otra terminal con el mismo entorno virtual:
+In another terminal using the same virtual environment:
 
 ```bash
 python tests/browser_smoke.py --url http://127.0.0.1:8880
 python tests/browser_layout.py --url http://127.0.0.1:8880
 ```
 
-Después de instalar el `.deb`, también puedes verificar el comando, la API y la exportación desde una carpeta temporal:
+After installing the `.deb`, you can also check the command, API, and export from a temporary directory:
 
 ```bash
 python3 tests/installed_smoke.py
 ```
 
-Para revisar proyectos reales que ya estén arrancados:
+To check real projects that are already running:
 
 ```bash
-python tests/integration_projects.py /ruta/proyecto-1 /ruta/proyecto-2
+python tests/integration_projects.py /path/to/project-1 /path/to/project-2
 python tests/browser_projects.py --url http://127.0.0.1:8765
 ```
 
-La auditoría crea `artifacts/integration-results.json`. Recorre las acciones QWeb y prueba su primera plantilla editable con el registro más reciente; distingue documentos renderizados, modelos sin registros, informes sin plantilla editable y errores. No busca automáticamente un registro que satisfaga las condiciones de negocio de cada informe. La exportación se comprueba en una carpeta temporal y las pruebas de navegador no guardan cambios en Odoo.
+The audit creates `artifacts/integration-results.json`. It goes through QWeb actions and tests their first editable template with the latest record, distinguishing rendered documents, models without records, reports without editable templates, and errors. It does not automatically find a record that satisfies each report's business conditions. Export is checked in a temporary directory, and browser tests do not save changes in Odoo.
 
 ```text
-report_editor/          Aplicación Python y proceso de integración con Odoo
-report_editor/static/   Interfaz, selección XML y paginación A4
-tests/                  Pruebas automáticas y de navegador
-packaging/              Lanzador y metadatos del paquete Debian
-docs/images/            Captura de la interfaz
-build_deb.sh            Generador del instalador
-pyproject.toml          Metadatos y dependencias Python
+report_editor/          Python application and Odoo integration process
+report_editor/static/   Interface, XML selection, and A4 pagination
+tests/                  Automated and browser tests
+packaging/              Debian package launcher and metadata
+docs/images/            Interface screenshot
+build_deb.sh            Installer builder
+pyproject.toml          Python metadata and dependencies
 ```
 
-Los comentarios del código se limitan a docstrings de Python y JSDoc en inglés. Los shebangs de los ejecutables son directivas de ejecución.
+Code comments are limited to Python docstrings and JSDoc in English. Executable shebangs are execution directives.
 
-## Autoría y licencia
+## Credits and license
 
-Desarrollado por **[kikedev64](https://github.com/kikedev64/kikedev64)**. La misma atribución aparece en «Acerca de» dentro de la aplicación.
+Developed by **[kikedev64](https://github.com/kikedev64/kikedev64)**. The same attribution appears in the application's About dialog.
 
-Este proyecto se distribuye bajo los términos de la licencia MIT. Consulta el fichero `LICENSE` para ver el texto completo.
+This project is distributed under the MIT license. See [LICENSE](LICENSE) for the full text.
